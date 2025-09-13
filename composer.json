@@ -1,0 +1,16 @@
+{
+    "name": "lucas/api-repository",
+    "description": "Project for API practices",
+    "type": "library",
+    "require": {
+        "vlucas/phpdotenv": "^5.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lucas Meyer",
+            "email": "lucasmeyer.scs@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
