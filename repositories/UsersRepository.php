@@ -1,6 +1,6 @@
 <?php
 
-class UsuarioRepository {
+class UserRepository {
     private $pdo;
 
     public function __construct($pdo) {
@@ -23,7 +23,7 @@ class UsuarioRepository {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function creatUser($name, $email, $password){
+    public function createUser($name, $email, $password){
         $stmt = $this->pdo->prepare("INSERT INTO USERS (nameuser, email, passworduser) VALUES (:nameuser, :emailuser, :passworduser)");
 
         $stmt->bindParam(':nameuser', $name);
@@ -45,7 +45,6 @@ class UsuarioRepository {
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
 }
 
 ?>
