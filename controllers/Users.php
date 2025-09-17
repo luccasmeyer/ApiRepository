@@ -1,6 +1,11 @@
 <?php
-require_once __DIR__ . '/../repositories/UsersRepository.php';
+    
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
+require_once __DIR__ . '/../repositories/UsersRepository.php';
+header("Content-Type: application/json");
 
 $repo = new UserRepository($pdo);
 
@@ -25,8 +30,22 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     case 'POST':
-        $data = json_decode(file_get_contents("php://input"), true);
-        $user = $repo->createUser($data['name'], $data['email'], $data['password']);
+        $name = $_POST['name'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        if (!$name || !$email || !$password) {
+            http_response_code(400);
+            echo json_encode([
+                "status" => "error",
+                "message" => "Campos obrigatórios faltando",
+                "recebido" => $data
+            ]);
+            exit;
+        } else {
+            
+            $user = $repo->createUser($name, $email, $password );
+        }
         
         echo json_encode([
             "status" => "ok",
@@ -53,4 +72,3 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 }
 
-?>

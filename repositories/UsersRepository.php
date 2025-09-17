@@ -16,23 +16,25 @@ class UserRepository {
     }
 
     public function listUser($id){
-        $stmt = $this->pdo->prepare("SELECT * FROM USERS WHERE :idUser");
+        $stmt = $this->pdo->prepare("SELECT * FROM USERS WHERE id = :idUser");
         $stmt->bindParam('idUser', $id);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    public function createUser($name, $email, $password) {
+        $stmt = $this->pdo->prepare(
+            "INSERT INTO USERS (nameuser, email, passworduser) 
+            VALUES (:name, :email, :password)"
+        );
 
-    public function createUser($name, $email, $password){
-        $stmt = $this->pdo->prepare("INSERT INTO USERS (nameuser, email, passworduser) VALUES (:nameuser, :emailuser, :passworduser)");
-
-        $stmt->bindParam(':nameuser', $name);
-        $stmt->bindParam(':emailuser', $email);
-        $stmt->bindParam(':passworduser', $password);
-
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':password', $password);
+        
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $this->pdo->lastInsertId();
     }
 
     public function deleteUser($id, $name){
@@ -47,4 +49,3 @@ class UserRepository {
     }
 }
 
-?>
