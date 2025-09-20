@@ -64,10 +64,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
             exit;
         }
 
+        $password = password_hash($password, PASSWORD_DEFAULT);
         $user = $repo->createUser($nameUser, $email, $password);
 
+        http_response_code(201);
         echo json_encode([
-            http_response_code(201),
             'status' => 'Usuario criado',
             'message' => $user
         ]);
@@ -97,8 +98,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
         $user = $repo->deleteUser($id, $nameUser);
 
+        http_response_code(200);
         echo json_encode([
-            http_response_code(200),
             'status' => 'success',
             'message' => "Usuario excluído"
         ]);
