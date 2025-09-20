@@ -12,19 +12,32 @@ $response = [];
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        if(isset($_GET['id'])){
+        $uri = $_SERVER['REQUEST_URI'];
+        $uriParts = explode('/', trim($uri, '/'));
+
+        if (isset($uriParts[1]) && $uriParts[1] === 'count') {
+            $total = $repo->countUsers();
+            echo json_encode([
+                "status" => "success",
+                "count"  => $total
+            ]);
+            exit;
+        }
+
+        $id = $uriParts[1] ?? null;
+        if ($id) {
             $user = $repo->listUser($id);
 
             echo json_encode([
-                "status" => $user ? "ok" : "error",
-                "data" => $user
+                "status" => $user ? "success" : "error",
+                "data"   => $user
             ]);
         } else {
             $users = $repo->listAllUsers();
 
             echo json_encode([
-                "status" => $users ? "ok" : "error",
-                "data" => $users
+                "status" => $users ? "success" : "error",
+                "data"   => $users
             ]);
         }
         break;
@@ -54,6 +67,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $user = $repo->createUser($nameUser, $email, $password);
 
         echo json_encode([
+            http_response_code(201),
             'status' => 'Usuario criado',
             'message' => $user
         ]);
@@ -84,6 +98,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $user = $repo->deleteUser($id, $nameUser);
 
         echo json_encode([
+            http_response_code(200),
             'status' => 'success',
             'message' => "Usuario excluído"
         ]);

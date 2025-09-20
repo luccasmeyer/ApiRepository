@@ -48,5 +48,16 @@ class UserRepository {
 
         return $stmt->rowCount();
     }
+
+    public function countUsers(){
+        $stmt = $this->pdo->prepare(
+            "SELECT COUNT(*) AS total FROM USERS"
+        );
+
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] ?? 0;
+    }
 }
 
