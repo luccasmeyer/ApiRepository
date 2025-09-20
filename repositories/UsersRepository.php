@@ -24,8 +24,7 @@ class UserRepository {
     }
     public function createUser($name, $email, $password) {
         $stmt = $this->pdo->prepare(
-            "INSERT INTO USERS (nameuser, email, passworduser) 
-            VALUES (:name, :email, :password)"
+            "INSERT INTO USERS (nameuser, email, passworduser) VALUES (:name, :email, :password)"
         );
 
         $stmt->bindParam(':name', $name);
@@ -38,14 +37,16 @@ class UserRepository {
     }
 
     public function deleteUser($id, $name){
-        $stmt = $this->pdo->prepare("DELETE FROM USER WHERE (:id, :nameuser)");
+        $stmt = $this->pdo->prepare(
+            "DELETE FROM USERS WHERE id = :id AND nameuser = :nameuser"
+        );
 
-        $stmt->bindParam(':id', $id);
-        $stmt->bindParam(':nameuser', $name);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->bindParam(':nameuser', $name, PDO::PARAM_STR);
 
         $stmt->execute();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->rowCount();
     }
 }
 

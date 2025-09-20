@@ -1,14 +1,14 @@
 <?php
     
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+//    ini_set('display_errors', 1);
+//    ini_set('display_startup_errors', 1);
+//    error_reporting(E_ALL);
 
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 header("Content-Type: application/json");
 
 $repo = new UserRepository($pdo);
-
+$response = [];
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
@@ -30,29 +30,36 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     case 'POST':
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
 
-        if (!$name || !$email || !$password) {
-            http_response_code(400);
+        $dataJson = file_get_contents("php://input");
+        if(!$dataJson){
             echo json_encode([
-                "status" => "error",
-                "message" => "Campos obrigatórios faltando",
-                "recebido" => $data
+                'status' => 'error',
+                'message' => 'data de cadastro não enviado'
             ]);
             exit;
-        } else {
-            
-            $user = $repo->createUser($name, $email, $password );
         }
-        
+        $data = json_decode($dataJson);
+        $nameUser = $data->name ?? null;
+        $email = $data->email ?? null;
+        $password = $data->password ?? null;
+
+        if(!$nameUser || !$email || !$password){
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'As informações necessarias não foram enviadas'
+            ]);
+            exit;
+        }
+
+        $user = $repo->createUser($nameUser, $email, $password);
+
         echo json_encode([
-            "status" => "ok",
-            "user" => $user
+            'status' => 'Usuario criado',
+            'message' => $user
         ]);
         break;
-    
+
     case 'DELETE':
         $data = json_decode(file_get_contents("php://input"), true);
         $user = $repo->deleteUser($data['id'], $data['name']);
