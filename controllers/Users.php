@@ -1,8 +1,8 @@
 <?php
     
-//    ini_set('display_errors', 1);
-//    ini_set('display_startup_errors', 1);
-//    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
 
 require_once __DIR__ . '/../repositories/UsersRepository.php';
 header("Content-Type: application/json");
@@ -30,7 +30,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     case 'POST':
-
         $dataJson = file_get_contents("php://input");
         if(!$dataJson){
             echo json_encode([
@@ -61,13 +60,33 @@ switch ($_SERVER['REQUEST_METHOD']) {
         break;
 
     case 'DELETE':
-        $data = json_decode(file_get_contents("php://input"), true);
-        $user = $repo->deleteUser($data['id'], $data['name']);
+        $dataJson = file_get_contents("php://input");
+        if(!$dataJson){
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'data de exclusão não enviada'
+            ]);
+            exit;
+        }
+
+        $data = json_decode($dataJson);
+        $id = $data->id ?? null;
+        $nameUser = $data->name ?? null;
+
+        if(!$id || !$nameUser){
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'As informações necessárias não foram enviadas'
+            ]);
+            exit;
+        }
+
+        $user = $repo->deleteUser($id, $nameUser);
 
         echo json_encode([
-            "status" => "ok"
+            'status' => 'success',
+            'message' => "Usuario excluído"
         ]);
-        
         break;
        
     default:
